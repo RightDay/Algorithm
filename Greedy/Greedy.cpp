@@ -4,6 +4,43 @@
 #include <vector>
 
 using namespace std;
+void InitializeStudents(vector<int>& allStudents, vector<int>& specificStudents, bool isLost)
+{
+	if (isLost)
+	{
+		for (int i = 0; i < specificStudents.size(); i++)
+		{
+			allStudents[specificStudents[i] - 1] -= 1;
+		}
+	}
+	else
+	{
+		for (int i = 0; i < specificStudents.size(); i++)
+		{
+			allStudents[specificStudents[i] - 1] += 1;
+		}
+	}	
+}
+
+void ReserveToLost(int num, vector<int>& allStudents, bool isFront)
+{
+	if (isFront)
+	{
+		if (allStudents[num - 1] == 2)
+		{
+			allStudents[num] += 1;
+			allStudents[num - 1] -= 1;
+		}
+	}
+	else
+	{
+		if (allStudents[num + 1] == 2)
+		{
+			allStudents[num] += 1;
+			allStudents[num + 1] -= 1;
+		}
+	}
+}
 
 int solution(int n, vector<int> lost, vector<int> reserve)
 {
@@ -11,15 +48,8 @@ int solution(int n, vector<int> lost, vector<int> reserve)
 
 	vector <int> students(n, 1);
 
-	for (int i = 0; i < lost.size(); i++)
-	{
-		students[lost[i] - 1] -= 1;
-	}
-
-	for (int i = 0; i < reserve.size(); i++)
-	{
-		students[reserve[i] - 1] += 1;
-	}
+	InitializeStudents(students, lost, true);
+	InitializeStudents(students, reserve, false);
 
 	for (int i = 0; i < n; i++)
 	{
@@ -27,20 +57,12 @@ int solution(int n, vector<int> lost, vector<int> reserve)
 		{
 			if (i - 1 > -1)
 			{
-				if (students[i - 1] == 2)
-				{
-					students[i] += 1;
-					students[i - 1] -= 1;
-				}
+				ReserveToLost(i, students, true);
 			}
 
 			if (i + 1 < n)
 			{
-				if (students[i + 1] == 2)
-				{
-					students[i] += 1;
-					students[i + 1] -= 1;
-				}
+				ReserveToLost(i, students, false);
 			}
 		}
 	}
